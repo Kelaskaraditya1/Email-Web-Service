@@ -103,4 +103,57 @@ public class EmailService {
 
         return status;
     }
+
+    public boolean sendEmailWithAttachment(EmailModel emailModel){
+        boolean status = false;
+
+        var property = System.getProperties();
+
+        property.put("mail.smtp.host","smtp.gmail.com");
+        property.put("mail.smtp.port","465");
+        property.put("mail.smtp.ssl.enable",true);
+        property.put("mail.smtp.auth",true);
+
+        Session session = Session.getInstance(property, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("kelaskaraditya1@gmail.com","acnr vbhe kutk mqtz");
+            }
+        });
+
+        session.setDebug(true);
+
+        try{
+
+
+            MimeMessage mimeMessage = new MimeMessage(session);
+
+            mimeMessage.setFrom("kelaskaraditya1@gmail.com");
+            mimeMessage.addRecipient(Message.RecipientType.TO , new InternetAddress(emailModel.getTo()));
+            mimeMessage.setSubject(emailModel.getSubject());
+
+            MimeMultipart mimeMultipart = new MimeMultipart();
+
+            MimeBodyPart textBodyPart = new MimeBodyPart();
+            textBodyPart.setText(emailModel.getMessage());
+
+            MimeBodyPart imageBodyPart = new MimeBodyPart();
+            String imagePath = "C:\\Users\\Aditya\\Desktop\\Programing files all\\Android Devlopment\\Raw\\Android Images\\video_call_logo.jpeg";
+            File file = new File(imagePath);
+            imageBodyPart.attachFile(file);
+
+            mimeMultipart.addBodyPart(textBodyPart);
+            mimeMultipart.addBodyPart(imageBodyPart);
+
+            mimeMessage.setContent(mimeMultipart);
+
+            Transport.send(mimeMessage);
+
+            status=true;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return status;
+    }
 }
