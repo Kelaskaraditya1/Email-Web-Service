@@ -8,6 +8,7 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import org.springframework.stereotype.Service;
 
+import javax.management.remote.rmi.RMIConnectionImpl;
 import java.io.File;
 import java.util.Properties;
 
@@ -63,6 +64,40 @@ public class EmailService {
             Transport.send(mimeMessage);
             status=true;
         }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return status;
+    }
+
+    public boolean sendEmailWithoutAttachment(EmailModel emailModel){
+        var status = false;
+
+        var property = System.getProperties();
+
+        property.put("mail.smtp.host","smtp.gmail.com");
+        property.put("mail.smtp.port","465");
+        property.put("mail.smtp.ssl.enable",true);
+        property.put("mail.smtp.auth",true);
+
+        Session session = Session.getInstance(property, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("kelaskaraditya1@gmail.com","acnr vbhe kutk mqtz");
+            }
+        });
+
+        session.setDebug(true);
+
+        try{
+            MimeMessage mimeMessage = new MimeMessage(session);
+            mimeMessage.setFrom("kelaskaraditya1@gmail.com");
+            mimeMessage.addRecipient(Message.RecipientType.TO,new InternetAddress(emailModel.getTo()));
+            mimeMessage.setSubject(emailModel.getSubject());
+            mimeMessage.setText(emailModel.getMessage());
+            Transport.send(mimeMessage);
+            status=true;
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

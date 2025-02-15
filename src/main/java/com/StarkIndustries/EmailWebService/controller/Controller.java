@@ -25,7 +25,7 @@ public class Controller {
     @PostMapping("/send-email")
     public ResponseEntity<?> sendEmail(@RequestBody EmailModel email){
 
-        if(this.emailService.sendEmail(email))
+        if(this.emailService.sendEmailWithoutAttachment(email))
             return ResponseEntity.status(HttpStatus.OK).body("Email send Successfully!!");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send email!!");
     }
